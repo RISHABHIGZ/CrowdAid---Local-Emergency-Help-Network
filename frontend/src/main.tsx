@@ -7,6 +7,10 @@ import { Toaster } from 'react-hot-toast'
 import App from './App'
 import { store } from './store'
 import './styles/globals.css'
+import { startKeepAlive } from './utils/keepAlive'
+
+// Ping backend every 14 min to prevent Render free tier sleep
+startKeepAlive()
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,20 +1,20 @@
 # ── Stage 1: Build ──────────────────────────────────────
-FROM eclipse-temurin:21-jdk-alpine AS builder
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
 WORKDIR /app
 
-COPY .mvn/ .mvn/
-COPY pom.xml ./
+# Copy pom and download deps first (layer cache)
+COPY pom.xml .
+RUN mvn dependency:go-offline -q
 
-# Download dependencies first (Docker layer cache)
-RUN apk add --no-cache maven && mvn dependency:go-offline -q
-
-COPY src/ src/
+# Copy source and build JAR
+COPY src ./src
 RUN mvn package -DskipTests -q
 
 # ── Stage 2: Runtime ─────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
+# Non-root user for security
 RUN addgroup -S crowdaid && adduser -S crowdaid -G crowdaid
 USER crowdaid
 
