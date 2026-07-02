@@ -1,8 +1,13 @@
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
+// Use VITE_API_URL env var in production, fall back to /api proxy in dev
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api'
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 15000,
 })

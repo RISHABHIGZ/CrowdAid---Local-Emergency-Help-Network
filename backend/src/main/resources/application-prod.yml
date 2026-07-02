@@ -1,0 +1,50 @@
+# ── Production profile (Railway / cloud) ─────────────────
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:noreply@crowdaid.com}
+    password: ${MAIL_PASSWORD:changeme}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
+  refresh-expiration: 604800000
+
+crowdaid:
+  emergency:
+    search-radius-km: ${SEARCH_RADIUS_KM:10}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:https://crowd-a2gztt2vq-shaw-workspace.vercel.app,https://crowdaid.vercel.app}
+
+logging:
+  level:
+    com.crowdaid: INFO
+    org.springframework.security: WARN
+
+server:
+  port: ${PORT:8080}

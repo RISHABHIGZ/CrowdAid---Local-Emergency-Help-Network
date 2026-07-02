@@ -1,11 +1,14 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
   servlet:
     context-path: /api
 
 spring:
   application:
     name: crowdaid-backend
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:default}
 
   datasource:
     url: jdbc:mysql://localhost:3306/crowdaid_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
