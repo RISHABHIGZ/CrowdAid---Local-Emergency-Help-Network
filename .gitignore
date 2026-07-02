@@ -1,0 +1,30 @@
+# ── Backend ─────────────────────────────────────────────
+backend/target/
+backend/.env
+backend/*.jar
+*.class
+*.log
+
+# ── Frontend ─────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+
+# ── IDE ──────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/settings.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ── OS ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Secrets ──────────────────────────────────────────────
+*.pem
+*.key
+.env
