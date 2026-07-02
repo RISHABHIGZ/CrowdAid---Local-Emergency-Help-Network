@@ -11,18 +11,20 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+      data-source-properties:
+        sslMode: VERIFY_IDENTITY
+        enabledTLSProtocols: TLSv1.2,TLSv1.3
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: ${DDL_AUTO:update}
     show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
   flyway:
-    enabled: true
-    baseline-on-migrate: true
+    enabled: false
 
   mail:
     host: smtp.gmail.com
