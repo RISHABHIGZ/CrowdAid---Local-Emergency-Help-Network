@@ -15,6 +15,7 @@ import com.crowdaid.repository.UserRepository;
 import com.crowdaid.service.EmergencyService;
 import com.crowdaid.service.NotificationService;
 import com.crowdaid.util.AiUrgencyClassifier;
+import com.crowdaid.util.GeoUtils;
 import com.crowdaid.websocket.EmergencyWebSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -156,8 +157,13 @@ public class EmergencyServiceImpl implements EmergencyService {
     // ── Private helpers ──────────────────────────────────────────────────────
 
     private void broadcastToNearbyHelpers(EmergencyRequest request) {
-        List<User> nearbyHelpers = userRepo.findAvailableHelpersWithinRadius(
-                request.getLatitude(), request.getLongitude(), searchRadiusKm);
+        // Fetch all available helpers then filter by radius in Java (DB-agnostic)
+        List<User> nearbyHelpers = userRepo.findAvailableHelpers()
+                .stream()
+                .filter(h -> GeoUtils.haversineDistanceKm(
+                        request.getLatitude(), request.getLongitude(),
+                        h.getLatitude(), h.getLongitude()) <= searchRadiusKm)
+                .collect(java.util.stream.Collectors.toList());
 
         nearbyHelpers.forEach(helper -> {
             notificationService.sendToUser(

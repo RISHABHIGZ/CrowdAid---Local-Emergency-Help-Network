@@ -29,28 +29,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param lng        center longitude
      * @param radiusKm   search radius in kilometres
      */
-    @Query(value = """
-        SELECT u.* FROM users u
-        INNER JOIN user_roles ur ON ur.user_id = u.id
-        INNER JOIN roles r       ON r.id = ur.role_id
+    /**
+     * Find available helpers — uses Java-side Haversine filtering
+     * (DB-agnostic, works on both MySQL and PostgreSQL)
+     */
+    @Query("""
+        SELECT u FROM User u
+        JOIN u.roles r
         WHERE r.name = 'ROLE_HELPER'
-          AND u.is_available = TRUE
-          AND u.is_active    = TRUE
-          AND u.latitude     IS NOT NULL
-          AND u.longitude    IS NOT NULL
-          AND (
-            6371 * ACOS(
-              COS(RADIANS(:lat)) * COS(RADIANS(u.latitude))
-              * COS(RADIANS(u.longitude) - RADIANS(:lng))
-              + SIN(RADIANS(:lat)) * SIN(RADIANS(u.latitude))
-            )
-          ) <= :radiusKm
-        """, nativeQuery = true)
-    List<User> findAvailableHelpersWithinRadius(
-            @Param("lat") double lat,
-            @Param("lng") double lng,
-            @Param("radiusKm") double radiusKm);
-
+          AND u.isAvailable = true
+          AND u.isActive = true
+          AND u.latitude IS NOT NULL
+          AND u.longitude IS NOT NULL
+        """)
+    List<User> findAvailableHelpers();
     @Query("SELECT COUNT(u) FROM User u WHERE u.isActive = true")
     long countActiveUsers();
 

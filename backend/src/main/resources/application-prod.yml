@@ -1,19 +1,19 @@
-# ── Production profile (Railway / cloud) ─────────────────
+# ── Production profile (Render + Render PostgreSQL) ──────
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /api
+
 spring:
   datasource:
     url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 10
-      minimum-idle: 2
+      maximum-pool-size: 5
+      minimum-idle: 1
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
-      data-source-properties:
-        sslMode: VERIFY_IDENTITY
-        enabledTLSProtocols: TLSv1.2,TLSv1.3
 
   jpa:
     hibernate:
@@ -21,7 +21,8 @@ spring:
     show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
 
   flyway:
     enabled: false
@@ -31,6 +32,12 @@ spring:
     port: 587
     username: ${MAIL_USERNAME:noreply@crowdaid.com}
     password: ${MAIL_PASSWORD:changeme}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 jwt:
   secret: ${JWT_SECRET}
@@ -41,12 +48,10 @@ crowdaid:
   emergency:
     search-radius-km: ${SEARCH_RADIUS_KM:10}
   cors:
-    allowed-origins: ${CORS_ORIGINS:https://crowd-a2gztt2vq-shaw-workspace.vercel.app,https://crowdaid.vercel.app}
+    allowed-origins: ${CORS_ORIGINS:https://crowd-a2gztt2vq-shaw-workspace.vercel.app}
 
 logging:
   level:
     com.crowdaid: INFO
     org.springframework.security: WARN
-
-server:
-  port: ${PORT:8080}
+    org.hibernate.SQL: WARN

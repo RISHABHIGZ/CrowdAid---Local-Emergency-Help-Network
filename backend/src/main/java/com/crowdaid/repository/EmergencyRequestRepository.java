@@ -47,11 +47,11 @@ public interface EmergencyRequestRepository extends JpaRepository<EmergencyReque
     List<Object[]> countGroupedByCategory();
 
     @Query("""
-        SELECT DATE(e.createdAt) as day, COUNT(e) as cnt
+        SELECT CAST(e.createdAt AS date) as day, COUNT(e) as cnt
         FROM EmergencyRequest e
         WHERE e.createdAt >= :since
-        GROUP BY DATE(e.createdAt)
-        ORDER BY day
+        GROUP BY CAST(e.createdAt AS date)
+        ORDER BY CAST(e.createdAt AS date)
         """)
     List<Object[]> countDailyActivity(@Param("since") LocalDateTime since);
 
